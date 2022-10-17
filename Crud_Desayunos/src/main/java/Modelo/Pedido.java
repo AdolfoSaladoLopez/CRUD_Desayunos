@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Pedido {
     private Integer idPedido;
+    private Integer idMismoPedido;
     private Date fechaPedido;
     private String nombreCliente;
     private String estadoPedido;
@@ -16,6 +17,14 @@ public class Pedido {
 
     public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
+    }
+
+    public Integer getIdMismoPedido() {
+        return idMismoPedido;
+    }
+
+    public void setIdMismoPedido(Integer idMismoPedido) {
+        this.idMismoPedido = idMismoPedido;
     }
 
     public Date getFechaPedido() {
