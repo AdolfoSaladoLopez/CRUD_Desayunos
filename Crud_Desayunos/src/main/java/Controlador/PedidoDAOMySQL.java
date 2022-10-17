@@ -54,6 +54,8 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        return listadoPedidosPendientes;
     }
 
     @Override
