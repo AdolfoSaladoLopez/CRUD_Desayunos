@@ -3,6 +3,8 @@ package Modelo;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import Controlador.PedidoDAOMySQL;
+
 public class Pedido {
     private Integer idPedido;
     private Integer idMismoPedido;
@@ -75,11 +77,15 @@ public class Pedido {
         String dia = arrayFechas[2];
 
 
-        return "Pedido: \n" +
+
+        return ("Pedido: \n" +
                 "\t- ID del pedido: " + this.idPedido +
                 "\n\t- Fecha del pedido: " + dia + " / " + mes + " / " + año +
                 "\n\t- Nombre del cliente: " + this.nombreCliente +
-                "\n\t- Estado del pedido: " + this.estadoPedido + "\n" +
-                recorrerListadoProductos(listaProductos);
-    }
+                "\n\t- Estado del pedido: " + this.estadoPedido + "\n") +
+                this.getListaProductos();
+
+               
+    };
+    
 }

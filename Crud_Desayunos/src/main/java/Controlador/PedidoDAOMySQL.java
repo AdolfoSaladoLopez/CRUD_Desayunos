@@ -12,17 +12,19 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     private final static String PORT = "3306";
     private final static String URL = "jdbc:mysql://localhost:" + PORT + "/" + BD;
     private final static String USER = "root";
-    private final static String PWD = "admin";
+    private final static String PWD = "12345";
 
     private static final String VER_PEDIDOS_HOY_QUERY = "SELECT * " +
             "FROM pedido " +
             "WHERE fecha =  CURDATE() " +
             "AND estado = 'Pendiente'";
 
-    private static final String OBTENER_PRODUCTOS_PEDIDO = "SELECT * " +
-            "FROM producto p, pedido pe " +
-            "WHERE p.id_producto = pe.id_producto " +
-            "AND pe.id_mismo_pedido = (?)";
+    private static final String OBTENER_PRODUCTOS_PEDIDO = "SELECT p.id_pedido, p.id_mismo_pedido," +
+    " p.fecha, p.cliente, p.estado, pro.nombre" +
+    "FROM pedido p, producto pro " +
+    "WHERE p.id_producto = pro.id_producto " +
+    "AND fecha =  CURDATE() " +
+    "AND estado = 'Pendiente'";
 
     static {
         try {
@@ -53,16 +55,20 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
             while (rs.next()) {
                 Pedido pedido = new Pedido();
+                
                 pedido.setIdPedido(rs.getInt("id_pedido"));
                 pedido.setIdMismoPedido(rs.getInt("id_mismo_pedido"));
                 pedido.setFechaPedido(rs.getDate("fecha"));
                 pedido.setNombreCliente(rs.getString("cliente"));
                 pedido.setEstadoPedido(rs.getString("estado"));
+                
+                Producto producto = new Producto();
+                producto.setNombreProducto(rs.getString("nombre"));
 
-                listadoProductosPedido = obtenerProductosDeUnPedido(pedido);
+                listadoProductosPedido.add(producto);
+            
 
-                pedido.setListaProductos(listadoProductosPedido);
-
+                if ()
                 listadoPedidosPendientes.add(pedido);
 
             }
@@ -77,7 +83,11 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
     @Override
     public ArrayList<Pedido> verPedidosUsuarioConcreto(String nombre) {
-        return null;
+        var listadoPedidos = new ArrayList<Pedido>();
+
+             
+
+        return listadoPedidos;
     }
 
     @Override
@@ -93,7 +103,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             while (rs.next()) {
                 Producto producto = new Producto();
 
-                producto.setIdProducto(rs.getInt("idProducto"));
+                producto.setIdProducto(rs.getInt("id_producto"));
                 producto.setNombreProducto(rs.getString("nombre"));
                 producto.setTipoProducto(rs.getString("tipo"));
                 producto.setPrecioProducto(rs.getFloat("precio"));
@@ -110,12 +120,22 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     }
 
     @Override
-    public void mostrarInformacionPedido(Pedido pedido) {
-
+    public void mostrarListadoPedidos(Pedido listadoPedidos) {
         System.out.println("Pedido: \n" +
-                "\t- ID del pedido: " + pedido.idPedido +
-                "\n\t- Fecha del pedido: " + pedido. +
-                "\n\t- Nombre del cliente: " + pedido.nombreCliente +
-                "\n\t- Estado del pedido: " + pedido.estadoPedido + "\n");
+                "\t- ID del pedido: " + listadoPedidos.getIdMismoPedido() +
+                "\n\t- Fecha del pedido: " + listadoPedidos.getFechaPedido() +
+                "\n\t- Nombre del cliente: " + listadoPedidos.getNombreCliente() +
+                "\n\t- Estado del pedido: " + listadoPedidos.getEstadoPedido() + "\n");
+
+
+        var listadoProductos = new ArrayList<Producto>();
+        listadoProductos.addAll(listadoPedidos.getListaProductos());
+        
+        listadoProductos.forEach(
+            Producto -> System.out.println(Producto)
+        );
+
+
+        
     }
 }
