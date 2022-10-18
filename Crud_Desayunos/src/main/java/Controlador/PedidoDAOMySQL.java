@@ -108,4 +108,17 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
         return listadoProducto;
     }
+
+    @Override
+    public void mostrarListadoPedidos(ArrayList<Pedido> listadoPedidos) {
+        System.out.println("Pedido: \n" +
+                "\t- ID del pedido: " + this.idPedido +
+                "\n\t- Fecha del pedido: " + dia + " / " + mes + " / " + año +
+                "\n\t- Nombre del cliente: " + this.nombreCliente +
+                "\n\t- Estado del pedido: " + this.estadoPedido + "\n");
+
+        listadoPedidos.
+
+
+    }
 }

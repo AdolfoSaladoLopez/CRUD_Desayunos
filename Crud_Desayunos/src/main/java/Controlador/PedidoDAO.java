@@ -8,5 +8,6 @@ public interface PedidoDAO {
     public Boolean cambiarEstadoARecogido(Pedido nuevoPedido);
     public ArrayList<Pedido> verPedidosPendientesHoy();
     public ArrayList<Pedido> verPedidosUsuarioConcreto(String nombre);
+    public void mostrarListadoPedidos(ArrayList<Pedido> listadoPedidos);
 
 }
