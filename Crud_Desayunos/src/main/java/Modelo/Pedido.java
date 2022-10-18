@@ -60,8 +60,8 @@ public class Pedido {
     }
 
     public String recorrerListadoProductos(ArrayList<Producto> listaProductos) {
-        listaProductos.forEach(
-                Producto -> super.toString()
+         listaProductos.forEach(
+                Producto -> System.out.println(Producto)
         );
         return null;
     }
@@ -69,7 +69,7 @@ public class Pedido {
     @Override
     public String toString() {
         String[] arrayFechas = new String[3];
-        arrayFechas = this.fechaPedido.toString().split(" ");
+        arrayFechas = this.fechaPedido.toString().split("-");
         String año = arrayFechas[0];
         String mes = arrayFechas[1];
         String dia = arrayFechas[2];
@@ -77,9 +77,9 @@ public class Pedido {
 
         return "Pedido: \n" +
                 "\t- ID del pedido: " + this.idPedido +
-                "\t- Fecha del pedido: " + dia + " / " + mes + " / " + año +
-                "\t- Nombre del cliente: " + this.nombreCliente +
-                "\t- Estado del pedido: " + this.estadoPedido + "\n" +
+                "\n\t- Fecha del pedido: " + dia + " / " + mes + " / " + año +
+                "\n\t- Nombre del cliente: " + this.nombreCliente +
+                "\n\t- Estado del pedido: " + this.estadoPedido + "\n" +
                 recorrerListadoProductos(listaProductos);
     }
 }

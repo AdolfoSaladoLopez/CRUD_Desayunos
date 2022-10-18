@@ -14,7 +14,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     private final static String USER = "root";
     private final static String PWD = "admin";
 
-    private static final String INSERTAR_PEDIDO_QUERY = "SELECT * " +
+    private static final String VER_PEDIDOS_HOY_QUERY = "SELECT * " +
             "FROM pedido " +
             "WHERE fecha =  CURDATE() " +
             "AND estado = 'Pendiente'";
@@ -46,9 +46,26 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     @Override
     public ArrayList<Pedido> verPedidosPendientesHoy() {
         var listadoPedidosPendientes = new ArrayList<Pedido>();
+        var listadoProductosPedido = new ArrayList<Producto>();
 
         try (Statement st = CON.createStatement()) {
-            ResultSet rs = st.executeQuery(INSERTAR_PEDIDO_QUERY);
+            ResultSet rs = st.executeQuery(VER_PEDIDOS_HOY_QUERY);
+
+            while (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setIdPedido(rs.getInt("id_pedido"));
+                pedido.setIdMismoPedido(rs.getInt("id_mismo_pedido"));
+                pedido.setFechaPedido(rs.getDate("fecha"));
+                pedido.setNombreCliente(rs.getString("cliente"));
+                pedido.setEstadoPedido(rs.getString("estado"));
+
+                listadoProductosPedido = obtenerProductosDeUnPedido(pedido);
+
+                pedido.setListaProductos(listadoProductosPedido);
+
+                listadoPedidosPendientes.add(pedido);
+
+            }
 
 
         } catch (SQLException e) {

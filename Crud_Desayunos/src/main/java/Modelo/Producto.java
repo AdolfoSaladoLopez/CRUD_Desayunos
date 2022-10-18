@@ -52,9 +52,9 @@ public class Producto {
     public String toString() {
         return "Producto: \n" +
                 "\t- ID del producto: " + this.idProducto +
-                "\t- Nombre del producto: " + this.nombreProducto +
-                "\t- Tipo de producto: " + this.tipoProducto +
-                "\t- Precio del producto: " + this.precioProducto +
-                "\t- Disponibilidad: " + (getDisponibilidadProducto() ? "Disponible" : "No disponible");
+                "\n\t- Nombre del producto: " + this.nombreProducto +
+                "\n\t- Tipo de producto: " + this.tipoProducto +
+                "\n\t- Precio del producto: " + this.precioProducto +
+                "\n\t- Disponibilidad: " + (getDisponibilidadProducto() ? "Disponible" : "No disponible");
     }
 }
