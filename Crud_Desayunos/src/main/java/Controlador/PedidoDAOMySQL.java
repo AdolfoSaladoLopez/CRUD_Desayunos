@@ -25,11 +25,11 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             """;
 
     private static final String OBTENER_PRODUCTOS_DISPONIBLES = """
-            SELECT * FROM producto WHERE estado = 1
+            SELECT * FROM producto WHERE disponibilidad = 1
             """;
 
     private static final String OBTENER_PRODUCTOS_NO_DISPONIBLES = """
-            SELECT * FROM producto WHERE estado = 0
+            SELECT * FROM producto WHERE disponibilidad = 0
             """;
 
     @Override
@@ -165,8 +165,11 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             System.out.println("!Bienvenid@!");
             System.out.println("1.- Mostrar carta de productos. ");
             System.out.println("2.- Mostrar información de un producto. ");
+            System.out.println("3.- Mostrar productos disponibles.");
+            System.out.println("4.- Mostrar productos no disponibles.");
             System.out.print("Seleccione opción: ");
             opcion = sc.nextInt();
+
 
             switch (opcion) {
                 case 1:
@@ -188,14 +191,49 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
                     System.out.print("¿De qué producto quiere ver información?: ");
                     Integer eleccionProducto = sc.nextInt();
-                    if (eleccionProducto > 0 && eleccionProducto < listadoProductos.size() - 1) {
+                    if (eleccionProducto > 0 && eleccionProducto < listadoProductos.size()) {
                         var producto = dao.obtenerProductoPorId(eleccionProducto);
 
                         System.out.println(producto);
                         break;
+                    } else {
+                        System.out.println("No ha introducido un número correcto.");
+                        break;
+                    }
+                case 3:
+                    var listaProductosDisponibles = new ArrayList<Producto>();
+                    listaProductosDisponibles.addAll(dao.obtenerProductosDisponibles());
+
+                    System.out.println();
+                    System.out.println("Listado de productos disponibles: ");
+
+                    if(listaProductosDisponibles.size() > 0) {
+                        listaProductosDisponibles.forEach(
+                            producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
+                             " - Precio: " + producto.getPrecioProducto())
+                        );
+                    } else {
+                        System.out.println("Actualmente ningún producto está disponible.");
                     }
 
+                    break;
+                case 4:
+                var listaProductosNoDisponibles = new ArrayList<Producto>();
+                    listaProductosNoDisponibles.addAll(dao.obtenerProductosNoDisponible());
 
+                    System.out.println();
+                    System.out.println("Listado de productos no disponibles: ");
+
+                    if(listaProductosNoDisponibles.size() > 0) {
+                        listaProductosNoDisponibles.forEach(
+                            producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
+                             " - Precio: " + producto.getPrecioProducto())
+                        );
+                    } else {
+                        System.out.println("Actualmente todos los productos están disponibles.");
+                    }
+                    
+                    break;
                 default:
                     System.out.println("Elección incorrecta.");
             }
