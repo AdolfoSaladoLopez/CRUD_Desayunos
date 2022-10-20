@@ -11,6 +11,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     private static Connection conexion = Conexion.getConexion();
     private static PedidoDAOMySQL dao = new PedidoDAOMySQL();
 
+    /* SENTENCIAS PRODUCTO */
     private static final String VER_PEDIDOS_HOY_QUERY = "SELECT * " +
             "FROM pedido " +
             "WHERE fecha =  CURDATE() " +
@@ -31,6 +32,10 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
     private static final String OBTENER_PRODUCTOS_NO_DISPONIBLES = """
             SELECT * FROM producto WHERE disponibilidad = 0
             """;
+
+
+
+    /* SENTENCIAS PEDIDO */
 
     @Override
     public ArrayList<Producto> obtenerProductosCarta() {
