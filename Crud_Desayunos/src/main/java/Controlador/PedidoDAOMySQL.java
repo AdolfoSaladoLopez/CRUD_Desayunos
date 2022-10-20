@@ -293,12 +293,13 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                     var productoNuevo = new Producto();
 
                     Boolean productoValido = false;
+                    String nombreProducto = "";
 
                     while (productoValido != true) {
                         System.out.println();
                         System.out.println("Insertar nuevo producto:");
                         System.out.print("Indique el nombre de su producto: ");
-                        var nombreProducto = sc.nextLine();
+                        nombreProducto = sc.nextLine();
                         nombreProducto.toLowerCase();
     
                         for (Producto producto : listaProductosNombre) {
