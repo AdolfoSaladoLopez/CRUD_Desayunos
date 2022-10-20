@@ -140,7 +140,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             ps.setFloat(3, producto.getPrecioProducto());
             ps.setBoolean(4, producto.getDisponibilidadProducto());
 
-            if (ps.executeUpdate() == 0) {
+            if (ps.executeUpdate() == 1) {
                 resultado = true;
             }
         } catch (SQLException e) {
@@ -289,28 +289,34 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                 case 5:
                     var listaProductosNombre = new ArrayList<Producto>();
                     listaProductosNombre.addAll(dao.obtenerProductosCarta());
+                    Scanner sc2 = new Scanner(System.in);
 
                     var productoNuevo = new Producto();
 
                     Boolean productoValido = false;
                     String nombreProducto = "";
+                    Integer contador = 0;
 
                     while (productoValido != true) {
                         System.out.println();
                         System.out.println("Insertar nuevo producto:");
                         System.out.print("Indique el nombre de su producto: ");
-                        nombreProducto = sc.nextLine();
-                        nombreProducto.toLowerCase();
+                        nombreProducto = sc2.nextLine();
     
                         for (Producto producto : listaProductosNombre) {
-                            if (producto.getNombreProducto().toLowerCase().equals(nombreProducto)) {
-                                productoValido = true;
-                            }
+                            if (producto.getNombreProducto().toLowerCase().equals(nombreProducto.toLowerCase())) {
+                               contador++;
+                            } 
+                            
                         }
 
-                        if(productoValido == false) {
-                            System.out.println("Ha introducido un nombre incorrecto");
+                        if (contador == 0) {
+                            productoValido = true;
+                        } else {
+                            System.out.println("El producto ya se encuentra en la carta.");
+                            contador = 0;
                         }
+
                     }
                     
                     if (productoValido) {
@@ -332,20 +338,33 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                             }
                         }
 
-                        System.out.println("Introduzca el precio del producto: ");
+                        System.out.println();
+                        System.out.print("Introduzca el precio del producto: ");
                         Float precioProducto = sc.nextFloat();
 
                         Boolean comprobarResultado = false;
-                        Boolean opcionDisponibilidad = false;
+                        Integer opcionDisponibilidad = 2;
+                        Boolean opcionBoolean = false;
 
                         while (comprobarResultado != true) {
-                            System.out.print("Introduzca disponibilidad del producto: ");
+                            System.out.println();
+                            System.out.println("Introduzca disponibilidad del producto: ");
                             System.out.println("0.- No disponible. ");
                             System.out.println("1.- Disponible. ");
-                            opcionDisponibilidad = sc.nextBoolean();
+                            System.out.print("Escriba: ");
+                            opcionDisponibilidad = sc.nextInt();
 
-                            if (comprobarResultado != true) {
+                            if (opcionDisponibilidad != 0 && opcionDisponibilidad != 1) {
                                 System.out.println("No ha elegido una opción correcta.");
+                            } else {
+                                comprobarResultado = true;
+
+                                
+                                if (opcionDisponibilidad  == 0) {
+                                    opcionBoolean = false;
+                                } else {
+                                    opcionBoolean = true;
+                                }
                             }
                         }
 
@@ -361,16 +380,19 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                         productoNuevo.setNombreProducto(nombreProducto);
                         productoNuevo.setTipoProducto(tipoProducto);
                         productoNuevo.setPrecioProducto(precioProducto);
-                        productoNuevo.setDisponibilidadProducto(opcionDisponibilidad);
+                        productoNuevo.setDisponibilidadProducto(opcionBoolean);
 
-                        if (dao.insertarNuevoProducto(productoNuevo)) {
-                            System.out.println("Producto insertado con éxito.");
-                        }
+                  
 
                     } else {
                         System.out.println();
                         System.out.println("El producto ya se encuentra en la carta.");
                         dao.mostrarMenu();
+                    }
+
+                    if (dao.insertarNuevoProducto(productoNuevo) == true) {
+                        System.out.println();
+                        System.out.println("Producto insertado con éxito.");
                     }
 
                     break;
