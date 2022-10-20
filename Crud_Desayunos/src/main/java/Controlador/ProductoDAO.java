@@ -8,5 +8,5 @@ public interface ProductoDAO {
     Producto obtenerProductoPorId(Integer id);
     ArrayList<Producto> obtenerProductosDisponibles();
     ArrayList<Producto> obtenerProductosNoDisponible();
-
+    Boolean instarNuevoProducto();ss
 }

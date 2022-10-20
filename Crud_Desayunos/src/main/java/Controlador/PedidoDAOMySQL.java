@@ -36,7 +36,6 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
 
     /* SENTENCIAS PEDIDO */
-
     @Override
     public ArrayList<Producto> obtenerProductosCarta() {
         var cartaProductos = new ArrayList<Producto>();
