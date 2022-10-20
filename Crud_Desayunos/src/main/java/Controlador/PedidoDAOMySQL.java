@@ -382,7 +382,6 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                         productoNuevo.setPrecioProducto(precioProducto);
                         productoNuevo.setDisponibilidadProducto(opcionBoolean);
 
-                  
 
                     } else {
                         System.out.println();
@@ -396,7 +395,8 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                     }
 
                     break;
-
+                case 6:
+                    var listaProductos = dao.obtenerProductosCarta();
                 default:
                     System.out.println("Elección incorrecta.");
             }
