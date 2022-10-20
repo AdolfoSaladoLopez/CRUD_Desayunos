@@ -1,9 +1,11 @@
 package Controlador;
 
-import Modelo.Producto;
+import Modelo.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public interface ProductoDAO {
+public interface ProductoDAO extends Serializable {
     ArrayList<Producto> obtenerProductosCarta();
     Producto obtenerProductoPorId(Integer id);
     ArrayList<Producto> obtenerProductosDisponibles();

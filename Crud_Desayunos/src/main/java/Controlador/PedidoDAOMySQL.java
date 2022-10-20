@@ -1,15 +1,14 @@
 package Controlador;
 
-import Modelo.Pedido;
-import Modelo.Producto;
+import Modelo.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
-    private static Connection conexion = Conexion.getConexion();
-    private static PedidoDAOMySQL dao = new PedidoDAOMySQL();
+    private static final Connection conexion = Conexion.getConexion();
+    private static final PedidoDAOMySQL dao = new PedidoDAOMySQL();
 
     /* SENTENCIAS PRODUCTO */
     private static final String VER_PEDIDOS_HOY_QUERY = "SELECT * " +
@@ -110,7 +109,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
     @Override
     public ArrayList<Producto> obtenerProductosNoDisponible() {
-        var listadoProductosDisponibles = new ArrayList<Producto>();
+        var listadoProductosNoDisponibles = new ArrayList<Producto>();
 
         try (var st = conexion.createStatement()) {
             ResultSet rs = st.executeQuery(OBTENER_PRODUCTOS_NO_DISPONIBLES);
@@ -120,14 +119,14 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
                 setearValoresProducto(rs, producto);
 
-                listadoProductosDisponibles.add(producto);
+                listadoProductosNoDisponibles.add(producto);
 
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
 
-        return listadoProductosDisponibles;
+        return listadoProductosNoDisponibles;
     }
 
     @Override
@@ -225,13 +224,8 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
             switch (opcion) {
                 case 1:
-                    var listadoProductos = new ArrayList<Producto>();
-                    listadoProductos.addAll(dao.obtenerProductosCarta());
-
-                    System.out.println("Listado de producto: ");
-                    listadoProductos.forEach(
-                            producto -> System.out
-                                    .println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
+                    listarProductos();
+                    ArrayList<Producto> listadoProductos;
                     break;
                 case 2:
                     listadoProductos = new ArrayList<Producto>();
@@ -302,12 +296,12 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                         System.out.println("Insertar nuevo producto:");
                         System.out.print("Indique el nombre de su producto: ");
                         nombreProducto = sc2.nextLine();
-    
+
                         for (Producto producto : listaProductosNombre) {
                             if (producto.getNombreProducto().toLowerCase().equals(nombreProducto.toLowerCase())) {
                                contador++;
-                            } 
-                            
+                            }
+
                         }
 
                         if (contador == 0) {
@@ -318,7 +312,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                         }
 
                     }
-                    
+
                     if (productoValido) {
 
                         Integer opcionTipo = 5;
@@ -359,7 +353,7 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                             } else {
                                 comprobarResultado = true;
 
-                                
+
                                 if (opcionDisponibilidad  == 0) {
                                     opcionBoolean = false;
                                 } else {
@@ -402,6 +396,16 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             }
 
         }
+    }
+
+    private static void listarProductos() {
+        var listadoProductos = new ArrayList<Producto>();
+        listadoProductos.addAll(dao.obtenerProductosCarta());
+
+        System.out.println("Listado de producto: ");
+        listadoProductos.forEach(
+                producto -> System.out
+                        .println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
     }
 
 }

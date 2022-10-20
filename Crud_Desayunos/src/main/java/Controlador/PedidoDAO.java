@@ -1,6 +1,7 @@
 package Controlador;
 
-import Modelo.Pedido;
+import Modelo.*;
+
 import java.util.ArrayList;
 
 public interface PedidoDAO {
