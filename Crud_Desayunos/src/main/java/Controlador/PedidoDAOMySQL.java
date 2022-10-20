@@ -33,7 +33,16 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             SELECT * FROM producto WHERE disponibilidad = 0
             """;
 
+    private static final String INSERTAR_NUEVO_PRODUCTO = """
+            INSERT INTO producto(nombre, tipo, precio, disponibilidad)
+             VALUES (?, ?, ?, ?);
+                """;
 
+    private static final String CAMBIAR_DISPONIBILIDAD_PRODUCTO = """
+            UPDATE producto SET disponibilidad = (?)
+             WHERE id_producto = (?);
+
+            """;
 
     /* SENTENCIAS PEDIDO */
     @Override
@@ -121,6 +130,45 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
         return listadoProductosDisponibles;
     }
 
+    @Override
+    public Boolean insertarNuevoProducto(Producto producto) {
+        Boolean resultado = false;
+
+        try (var ps = conexion.prepareStatement(INSERTAR_NUEVO_PRODUCTO)) {
+            ps.setString(1, producto.getNombreProducto());
+            ps.setString(2, producto.getTipoProducto());
+            ps.setFloat(3, producto.getPrecioProducto());
+            ps.setBoolean(4, producto.getDisponibilidadProducto());
+
+            if (ps.executeUpdate() == 0) {
+                resultado = true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return resultado;
+    }
+
+    @Override
+    public Boolean cambiarDisponibilidadProducto(Integer idProducto, Boolean disponibilidad) {
+        Boolean resultado = false;
+
+        try (var ps = conexion.prepareStatement(CAMBIAR_DISPONIBILIDAD_PRODUCTO)) {
+            ps.setBoolean(1, disponibilidad);
+            ps.setInt(2, idProducto);
+
+            if (ps.executeUpdate() == 0) {
+                resultado = true;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return resultado;
+    }
+
     private void setearValoresProducto(ResultSet rs, Producto producto) throws SQLException {
         producto.setIdProducto(rs.getInt("id_producto"));
         producto.setNombreProducto(rs.getString("nombre"));
@@ -171,9 +219,9 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
             System.out.println("2.- Mostrar información de un producto. ");
             System.out.println("3.- Mostrar productos disponibles.");
             System.out.println("4.- Mostrar productos no disponibles.");
+            System.out.println("5.- Insertar un nuevo producto.");
             System.out.print("Seleccione opción: ");
             opcion = sc.nextInt();
-
 
             switch (opcion) {
                 case 1:
@@ -182,7 +230,8 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
 
                     System.out.println("Listado de producto: ");
                     listadoProductos.forEach(
-                            producto -> System.out.println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
+                            producto -> System.out
+                                    .println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
                     break;
                 case 2:
                     listadoProductos = new ArrayList<Producto>();
@@ -191,7 +240,8 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                     System.out.println();
                     System.out.println("Listado de producto: ");
                     listadoProductos.forEach(
-                            producto -> System.out.println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
+                            producto -> System.out
+                                    .println("\t" + producto.getIdProducto() + ".- " + producto.getNombreProducto()));
 
                     System.out.print("¿De qué producto quiere ver información?: ");
                     Integer eleccionProducto = sc.nextInt();
@@ -211,33 +261,119 @@ public class PedidoDAOMySQL implements PedidoDAO, ProductoDAO {
                     System.out.println();
                     System.out.println("Listado de productos disponibles: ");
 
-                    if(listaProductosDisponibles.size() > 0) {
+                    if (listaProductosDisponibles.size() > 0) {
                         listaProductosDisponibles.forEach(
-                            producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
-                             " - Precio: " + producto.getPrecioProducto())
-                        );
+                                producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
+                                        " - Precio: " + producto.getPrecioProducto()));
                     } else {
                         System.out.println("Actualmente ningún producto está disponible.");
                     }
 
                     break;
                 case 4:
-                var listaProductosNoDisponibles = new ArrayList<Producto>();
+                    var listaProductosNoDisponibles = new ArrayList<Producto>();
                     listaProductosNoDisponibles.addAll(dao.obtenerProductosNoDisponible());
 
                     System.out.println();
                     System.out.println("Listado de productos no disponibles: ");
 
-                    if(listaProductosNoDisponibles.size() > 0) {
+                    if (listaProductosNoDisponibles.size() > 0) {
                         listaProductosNoDisponibles.forEach(
-                            producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
-                             " - Precio: " + producto.getPrecioProducto())
-                        );
+                                producto -> System.out.println("\t- Nombre: " + producto.getNombreProducto() +
+                                        " - Precio: " + producto.getPrecioProducto()));
                     } else {
                         System.out.println("Actualmente todos los productos están disponibles.");
                     }
-                    
+
                     break;
+                case 5:
+                    var listaProductosNombre = new ArrayList<Producto>();
+                    listaProductosNombre.addAll(dao.obtenerProductosCarta());
+
+                    var productoNuevo = new Producto();
+
+                    Boolean productoValido = false;
+
+                    while (productoValido != true) {
+                        System.out.println();
+                        System.out.println("Insertar nuevo producto:");
+                        System.out.print("Indique el nombre de su producto: ");
+                        var nombreProducto = sc.nextLine();
+                        nombreProducto.toLowerCase();
+    
+                        for (Producto producto : listaProductosNombre) {
+                            if (producto.getNombreProducto().toLowerCase().equals(nombreProducto)) {
+                                productoValido = true;
+                            }
+                        }
+
+                        if(productoValido == false) {
+                            System.out.println("Ha introducido un nombre incorrecto");
+                        }
+                    }
+                    
+                    if (productoValido) {
+
+                        Integer opcionTipo = 5;
+
+                        while (opcionTipo < 0 || opcionTipo > 4) {
+                            System.out.println();
+                            System.out.println("Insertar tipo de producto: ");
+                            System.out.println("1.- Refresco.");
+                            System.out.println("2.- Bebida.");
+                            System.out.println("3.- Bocadillo");
+                            System.out.println("4.- Bollería.");
+                            System.out.print("Elija la opción ");
+                            opcionTipo = sc.nextInt();
+
+                            if (opcionTipo < 0 && opcionTipo > 5) {
+                                System.out.println("No ha introducido un tipo correcto.");
+                            }
+                        }
+
+                        System.out.println("Introduzca el precio del producto: ");
+                        Float precioProducto = sc.nextFloat();
+
+                        Boolean comprobarResultado = false;
+                        Boolean opcionDisponibilidad = false;
+
+                        while (comprobarResultado != true) {
+                            System.out.print("Introduzca disponibilidad del producto: ");
+                            System.out.println("0.- No disponible. ");
+                            System.out.println("1.- Disponible. ");
+                            opcionDisponibilidad = sc.nextBoolean();
+
+                            if (comprobarResultado != true) {
+                                System.out.println("No ha elegido una opción correcta.");
+                            }
+                        }
+
+                        String tipoProducto = "";
+
+                        switch (opcionTipo) {
+                            case 1: tipoProducto = "Refresco"; break;
+                            case 2: tipoProducto = "Bebida"; break;
+                            case 3: tipoProducto = "Bocadillo"; break;
+                            case 4: tipoProducto = "Bolleria"; break;
+                        }
+
+                        productoNuevo.setNombreProducto(nombreProducto);
+                        productoNuevo.setTipoProducto(tipoProducto);
+                        productoNuevo.setPrecioProducto(precioProducto);
+                        productoNuevo.setDisponibilidadProducto(opcionDisponibilidad);
+
+                        if (dao.insertarNuevoProducto(productoNuevo)) {
+                            System.out.println("Producto insertado con éxito.");
+                        }
+
+                    } else {
+                        System.out.println();
+                        System.out.println("El producto ya se encuentra en la carta.");
+                        dao.mostrarMenu();
+                    }
+
+                    break;
+
                 default:
                     System.out.println("Elección incorrecta.");
             }
